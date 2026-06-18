@@ -1,5 +1,5 @@
 
-from src import predict
+from src.predict import predict
 from tests.sample_input import get_sample_input
 
 def test_predict():
