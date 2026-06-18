@@ -1,11 +1,7 @@
 from src.predict import predict
-import pandas as pd
+from tests.sample_input import get_sample_input
 
 def test_schema():
-    sample = pd.DataFrame([{
-        "feature1": 0,
-        "feature2": 1
-    }])
-
+    sample = get_sample_input()
     output = predict(sample)
     assert output is not None
