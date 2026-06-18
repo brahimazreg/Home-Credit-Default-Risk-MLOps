@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from joblib import load
 import pandas as pd
-from src.config import default_model, DATA_PATH
+from src.config import default_model
 import os
 import math
 import json
@@ -20,11 +20,6 @@ LOG_FILE = LOG_DIR / "predictions.jsonl"
 
 EXPECTED_FEATURES = model.feature_names_in_
 
-
-
-
-
-
 class InputData(BaseModel):
     data: dict
 
@@ -40,7 +35,7 @@ def align(df):
 def predict(input: InputData):
     df = pd.DataFrame([input.data])
     df = align(df)
-    
+
     try:
         df = pd.DataFrame([input.data])
 
@@ -82,7 +77,14 @@ def sample():
             "CNT_CHILDREN": 0,
             "CODE_GENDER": "M",
             "FLAG_OWN_CAR": "N",
-            "FLAG_OWN_REALTY": "Y"
+            "FLAG_OWN_REALTY": "Y",
+            "NAME_CONTRACT_TYPE": "Cash loans",
+            "NAME_INCOME_TYPE": "Working",
+            "NAME_EDUCATION_TYPE": "Secondary / secondary special",
+            "NAME_FAMILY_STATUS": "Single / not married",
+            "NAME_HOUSING_TYPE": "House / apartment",
+            "DAYS_BIRTH": -9461,
+            "DAYS_EMPLOYED": -637
         }
     }
 

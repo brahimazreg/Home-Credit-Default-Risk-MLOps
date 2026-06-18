@@ -1,7 +1,9 @@
 import pandas as pd
 import json
-from evidently.report import Report
-from evidently.metric_preset import DataDriftPreset
+from evidently import Report
+from evidently.presets import DataDriftPreset
+
+
 
 # logs
 rows = []
