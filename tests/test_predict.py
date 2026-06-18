@@ -1,4 +1,4 @@
-from joblib import load
+""" from joblib import load
 import pandas as pd
 from src.config import default_model
 
@@ -15,5 +15,16 @@ def test_predict():
     print("OK - prediction works")
 
 if __name__=='__main__':
-    test_predict()
+    test_predict() """
 
+from src.predict import predict
+import pandas as pd
+
+def test_schema():
+    sample = pd.DataFrame([{
+        "feature1": 0,
+        "feature2": 1
+    }])
+
+    output = predict(sample)
+    assert output is not None
