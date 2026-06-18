@@ -21,3 +21,7 @@ mlflow.db
 .vscode/
 .idea/
 .DS_Store
+
+data/raw/
+data/
+*.csv
