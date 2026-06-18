@@ -48,3 +48,5 @@ if submitted:
         st.write("Prediction:", result["prediction"])
         st.write("Probability:", result["probability"])
     
+
+      

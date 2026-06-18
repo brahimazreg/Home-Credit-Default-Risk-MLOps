@@ -18,6 +18,12 @@ LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / "predictions.jsonl"
 
+EXPECTED_FEATURES = model.feature_names_in_
+
+
+
+
+
 
 class InputData(BaseModel):
     data: dict
@@ -32,6 +38,9 @@ def align(df):
 
 @app.post("/predict")
 def predict(input: InputData):
+    df = pd.DataFrame([input.data])
+    df = align(df)
+    
     try:
         df = pd.DataFrame([input.data])
 
@@ -64,15 +73,22 @@ def predict(input: InputData):
 def health():
     return {"status": "ok"}
 
-
 @app.get("/sample")
 def sample():
-    try:
-        df = pd.read_csv(DATA_PATH)
-        sample = df.head(1).drop(columns=["SK_ID_CURR", "TARGET"]).fillna(0).to_dict(orient="records")[0]
-        return {"data": sample}
-    except Exception as e:
-        return {"error": str(e)}
+    return {
+        "data": {
+            "AMT_INCOME_TOTAL": 202500,
+            "AMT_CREDIT": 406597.5,
+            "CNT_CHILDREN": 0,
+            "CODE_GENDER": "M",
+            "FLAG_OWN_CAR": "N",
+            "FLAG_OWN_REALTY": "Y"
+        }
+    }
+
+
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
