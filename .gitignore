@@ -1,0 +1,23 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Logs
+logs/
+*.jsonl
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Models (optional)
+#models/*.joblib
+
+# Streamlit cache
+.streamlit/
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
