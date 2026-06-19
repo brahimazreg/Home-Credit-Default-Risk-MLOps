@@ -4,7 +4,6 @@ from joblib import load
 import pandas as pd
 from src.config import default_model
 import os
-import math
 import json
 from pathlib import Path
 from datetime import datetime, timezone
@@ -17,8 +16,6 @@ EXPECTED_FEATURES = model.feature_names_in_
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / "predictions.jsonl"
-
-EXPECTED_FEATURES = model.feature_names_in_
 
 class InputData(BaseModel):
     data: dict

@@ -32,6 +32,8 @@ preprocessor = get_preprocessor()
 # ---------------------------
 # MLflow setup
 # ---------------------------
+mlflow.sklearn.autolog(disable=True)
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
 mlflow.set_experiment("home_credit_prediction")
 
 
@@ -92,7 +94,9 @@ def train_data(model):
         # ---------------------------
         mlflow.sklearn.log_model(
             sk_model=inference_pipeline,
-            artifact_path="model"
+            artifact_path="model",
+            registered_model_name="home_credit_model",
+            serialization_format="cloudpickle"
         )
 
         print("Training completed & logged to MLflow")
