@@ -2,25 +2,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from joblib import load
 import pandas as pd
-
-import os
-import math
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+import os
+
 from src.config import default_model
-from src.data_preprocessing import get_train_test_data
 
 app = FastAPI()
 
+# load model ONLY (no dataset dependency)
 model = load(default_model)
 
-#print(type(model))
-#print(model.named_steps)
-#print(default_model)
-
-X_train, _, _, _ = get_train_test_data()
-EXPECTED_FEATURES = X_train.columns.tolist()
+# load feature schema ONLY
+EXPECTED_FEATURES = load("models/features.pkl")
 
 
 LOG_DIR = Path("logs")
@@ -28,49 +23,44 @@ LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / "predictions.jsonl"
 
 
-
 class InputData(BaseModel):
     data: dict
 
-def align(df):
-    df = df.reindex(columns=EXPECTED_FEATURES, fill_value=0)
-    return df
 
+def align(df):
+    return df.reindex(columns=EXPECTED_FEATURES, fill_value=0)
 
 
 @app.post("/predict")
 def predict(input: InputData):
-    try:
-        df = pd.DataFrame([input.data])
 
-        df = df.replace([float("inf"), float("-inf")], 0).fillna(0)
-        df = align(df)
+    df = pd.DataFrame([input.data])
+    df = df.replace([float("inf"), float("-inf")], 0).fillna(0)
+    df = align(df)
 
-        pred = model.predict(df)[0]
-        proba = model.predict_proba(df)[0][1]
+    pred = model.predict(df)[0]
+    proba = model.predict_proba(df)[0][1]
 
-        log_entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "input": input.data,
-            "prediction": int(pred),
-            "probability": float(proba)
-        }
+    log_entry = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "input": input.data,
+        "prediction": int(pred),
+        "probability": float(proba)
+    }
 
-        with open(LOG_FILE, "a") as f:
-            f.write(json.dumps(log_entry) + "\n")
+    with open(LOG_FILE, "a") as f:
+        f.write(json.dumps(log_entry) + "\n")
 
-        return {
-            "prediction": int(pred),
-            "probability": float(proba)
-        }
-
-    except Exception as e:
-        return {"error": str(e)}
+    return {
+        "prediction": int(pred),
+        "probability": float(proba)
+    }
 
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 @app.get("/sample")
 def sample():
@@ -91,8 +81,6 @@ def sample():
             "DAYS_EMPLOYED": -637
         }
     }
-
-
 
 
 if __name__ == "__main__":

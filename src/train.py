@@ -12,19 +12,13 @@ from src.data_preprocessing import get_train_test_data, build_preprocessor
 from src.config import MODEL_PATH, RANDOM_STATE,default_model
 import xgboost
 from xgboost import XGBClassifier
-
-# save model
-#-----------
-def save_model(model):
-    model_name = MODEL_PATH / f"{model.named_steps['model'].__class__.__name__}.joblib"     
-    model_name.parent.mkdir(parents=True, exist_ok=True)
-    dump(model, model_name)
-    print(f"Model saved to {model_name}")  
+import joblib
 
 # ---------------------------
 # LOAD DATA ONCE
 # ---------------------------
 X_train, X_test, Y_train, Y_test = get_train_test_data()
+joblib.dump(X_train.columns.tolist(), MODEL_PATH / "features.pkl")
 preprocessor = build_preprocessor(X_train)
 
 # thishelp to chose parameters inxgboost
