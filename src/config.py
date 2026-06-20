@@ -6,4 +6,6 @@ DATA_PATH=(Path(__file__).resolve().parent.parent / "data" / "raw" /"application
 
 MODEL_PATH = Path(__file__).resolve().parent.parent / "models"
 
-default_model = MODEL_PATH / "logistic_regression.joblib"
+#default_model = MODEL_PATH / "logistic_regression.joblib"
+#default_model = MODEL_PATH / "RandomForestClassifier.joblib"
+default_model = MODEL_PATH / "XGBClassifier.joblib"

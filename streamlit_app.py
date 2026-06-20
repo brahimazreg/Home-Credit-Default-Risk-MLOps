@@ -35,7 +35,15 @@ if submitted:
         json=payload
     )
 
-    result = response.json()
+    
+
+
+    if response.status_code == 200:
+        result = response.json()
+    else:
+        st.error("API Error")
+        st.text(response.text)
+        st.stop()
 
     st.write("RAW:", result)
 

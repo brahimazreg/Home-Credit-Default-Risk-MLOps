@@ -2,37 +2,44 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from joblib import load
 import pandas as pd
-from src.config import default_model
+
 import os
+import math
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+from src.config import default_model
+from src.data_preprocessing import get_train_test_data
 
 app = FastAPI()
 
 model = load(default_model)
-EXPECTED_FEATURES = model.feature_names_in_
+
+#print(type(model))
+#print(model.named_steps)
+#print(default_model)
+
+X_train, _, _, _ = get_train_test_data()
+EXPECTED_FEATURES = X_train.columns.tolist()
+
 
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / "predictions.jsonl"
 
+
+
 class InputData(BaseModel):
     data: dict
 
-
 def align(df):
-    for col in EXPECTED_FEATURES:
-        if col not in df.columns:
-            df[col] = 0
-    return df[EXPECTED_FEATURES]
+    df = df.reindex(columns=EXPECTED_FEATURES, fill_value=0)
+    return df
+
 
 
 @app.post("/predict")
 def predict(input: InputData):
-    df = pd.DataFrame([input.data])
-    df = align(df)
-
     try:
         df = pd.DataFrame([input.data])
 
