@@ -9,37 +9,42 @@ from sklearn.model_selection import train_test_split
 
 
 # read data
-df=pd.read_csv(DATA_PATH)
+def load_data():
+    return pd.read_csv(DATA_PATH)
 
-# split isolate target from others features
-X=df.drop(columns=['SK_ID_CURR','TARGET'],axis=1)
-Y=df['TARGET']
+def build_features(df):
+    X = df.drop(columns=['SK_ID_CURR', 'TARGET'])
+    Y = df['TARGET']
+    return X, Y
 
-# define categoricals and numericals columns 
-num_cols = X.select_dtypes(
-    include=['int64','float64']
-).columns.tolist()
 
-cat_cols = X.select_dtypes(
-    include=['object']
-).columns.tolist()
+def build_preprocessor(X):
 
-numeric_pipeline = Pipeline([
-    ("imputer", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler())
-])
+    num_cols = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    cat_cols = X.select_dtypes(include=['object']).columns.tolist()
 
-categorical_pipeline = Pipeline([
-    ("imputer", SimpleImputer(strategy="most_frequent")),
-    ("encoder", OneHotEncoder(handle_unknown="ignore"))
-])
+    numeric_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler())
+    ])
 
-preprocessor = ColumnTransformer([
-    ("num", numeric_pipeline, num_cols),
-    ("cat", categorical_pipeline, cat_cols)
-])
+    categorical_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("encoder", OneHotEncoder(handle_unknown="ignore"))
+    ])
+
+    return ColumnTransformer([
+        ("num", numeric_pipeline, num_cols),
+        ("cat", categorical_pipeline, cat_cols)
+    ])
+
+
+
 
 def get_train_test_data():
+
+    df = load_data()
+    X, Y = build_features(df)
 
     X_train, X_test, Y_train, Y_test = train_test_split(
         X,
@@ -49,7 +54,4 @@ def get_train_test_data():
         stratify=Y
     )
 
-    return  X_train, X_test, Y_train, Y_test
- 
-def get_preprocessor():
-    return preprocessor 
+    return X_train, X_test, Y_train, Y_test

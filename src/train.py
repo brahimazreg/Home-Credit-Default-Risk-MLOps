@@ -8,7 +8,7 @@ from imblearn.pipeline import Pipeline as imbpipeline
 from sklearn.pipeline import Pipeline as skpipeline
 from imblearn.over_sampling import SMOTE
 from joblib import dump
-from src.data_preprocessing import get_train_test_data, get_preprocessor
+from src.data_preprocessing import get_train_test_data, build_preprocessor
 from src.config import MODEL_PATH, RANDOM_STATE,default_model
 import xgboost
 from xgboost import XGBClassifier
@@ -25,7 +25,7 @@ def save_model(model):
 # LOAD DATA ONCE
 # ---------------------------
 X_train, X_test, Y_train, Y_test = get_train_test_data()
-preprocessor = get_preprocessor()
+preprocessor = build_preprocessor(X_train)
 
 # thishelp to chose parameters inxgboost
 neg = (Y_train == 0).sum()
